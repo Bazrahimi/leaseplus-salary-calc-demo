@@ -48,7 +48,7 @@ const HomePage = () => {
   return (
     <div className="max-w-lg max-auto p-6 bg-white shadow-md rounded-md">
       <h1 className="text-2xl font-bold mb-4 text-center">
-        LeasePlus Salary Packaging Estimator{" "}
+        LeasePlus Salary Packaging Limit Calculator{" "}
       </h1>
       <form className="block font-medium mb-1">
         <div>
@@ -117,7 +117,7 @@ const HomePage = () => {
             className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue mt-5 "
             onClick={handleSubmit}
           >
-            Calculate Salary
+            Calculate Salary Limit
           </button>
           {response && (
             <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-md">
