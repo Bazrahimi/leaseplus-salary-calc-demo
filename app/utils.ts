@@ -3,8 +3,8 @@
 export interface FormData {
   companyType: string;
   employmentType: string;
-  salary: number | "";
-  hoursWorked: number | "";
+  salary: number;
+  hoursWorked: number;
   isEducated: boolean;
 }
 

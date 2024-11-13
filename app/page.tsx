@@ -7,8 +7,8 @@ const HomePage = () => {
   const [FormData, SetFormData] = useState<FormData>({
     companyType: "",
     employmentType: "",
-    salary: "",
-    hoursWorked: "",
+    salary: 0,
+    hoursWorked: 0,
     isEducated: false,
   });
 
