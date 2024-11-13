@@ -13,6 +13,7 @@ const HomePage = () => {
   });
 
   const [response, setResponse] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -23,7 +24,46 @@ const HomePage = () => {
       [name]: type === "checkbox" ? checked : value,
     });
   };
+
+  const validateForm = () => {
+    if (!FormData.companyType) {
+      setError("Company Type is required.");
+      return false;
+    }
+    if (!FormData.employmentType) {
+      setError("Employment Type is required.");
+      return false;
+    }
+    if (!FormData.salary || Number(FormData.salary) <= 0) {
+      setError("Salary must be a positive number.");
+      return false;
+    }
+    if (
+      FormData.employmentType === "Part-time" &&
+      (!FormData.hoursWorked || Number(FormData.hoursWorked) <= 0)
+    ) {
+      setError(
+        "Hours Worked per week is required for part-time employees and must between 0 - 38."
+      );
+      return false;
+    }
+    if (
+      FormData.employmentType === "Part-time" &&
+      Number(FormData.hoursWorked) >= 38
+    ) {
+      setError(
+        "Hours Worked per week for part-time employees must be less than 38."
+      );
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return; // Stop form submission if validation fails
+    }
     try {
       const response = await fetch("/api/", {
         method: "POST",
@@ -95,7 +135,7 @@ const HomePage = () => {
           <input
             type="number"
             name="salary"
-            placeholder="e.g., 100000 (Enter full number without $ or commas)"
+            placeholder="e.g., 100000 (without $ or commas)"
             className="w-full p-2 border border-gray-300 rounded-md"
             onChange={handleChange}
           />
@@ -111,6 +151,12 @@ const HomePage = () => {
               Completed a Bachelor Degree or Higher
             </label>
           </div>
+
+          {error && (
+            <div className="mt-4 p-2 bg-red-100 border border-red-300 rounded-md">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
 
           <button
             type="button"
