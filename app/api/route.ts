@@ -1,6 +1,6 @@
 // app/api/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { FormData } from "../utils";
+import { FormData, formatCurrency } from "../utils";
 
 // POST handler function for API route
 export const POST = async (req: NextRequest) => {
@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
       packageLimit = 0; // Casual employees get no limit
     } else {
       packageLimit =
-      // 1% of $100,0000 plus 0.1% beyond
+        // 1% of $100,0000 plus 0.1% beyond
         salary <= 100000 ? salary * 0.01 : 1000 + (salary - 100000) * 0.001;
       if (employmentType === "Part-time") {
         packageLimit *= hoursWorked / 38;
@@ -44,26 +44,27 @@ export const POST = async (req: NextRequest) => {
   }
 
   // condition for PBI employees
-if (companyType === "PBI") {
-  // get lesser value of 50k or 32.55%
-  packageLimit = Math.min(50000, salary * 0.3255); 
-  // 10% for Casual employees
-  if (employmentType === "Casual") {
-    packageLimit = salary * 0.1; 
+  if (companyType === "PBI") {
+    // get lesser value of 50k or 32.55%
+    packageLimit = Math.min(50000, salary * 0.3255);
+    // 10% for Casual employees
+    if (employmentType === "Casual") {
+      packageLimit = salary * 0.1;
+    }
+
+    if (isEducated) {
+      // $2,000 + 1% of the salary
+      packageLimit += 2000 + salary * 0.01;
+    }
+
+    if (employmentType === "Part-time") {
+      // 80% of the full-time package limit
+      packageLimit *= 0.8;
+    }
   }
 
-  if (isEducated) {
-    // $2,000 + 1% of the salary
-    packageLimit += 2000 + salary * 0.01; 
-  }
+  // Format the packageLimit using the formatCurrency function
+  const formattedPackageLimit = formatCurrency(packageLimit);
 
-  if (employmentType === "Part-time") {
-    // 80% of the full-time package limit
-    packageLimit *= 0.8; 
-  }
-}
-
-
-  // Return the calculated limit as JSON response
-  return NextResponse.json({ limit: packageLimit });
-}
+  return NextResponse.json({ limit: formattedPackageLimit });
+};
