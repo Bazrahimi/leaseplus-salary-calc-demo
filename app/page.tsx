@@ -1,6 +1,7 @@
 "use client";
 // app/page.tsx
 import { ChangeEvent, useState } from "react";
+import { FormData } from "./utils";
 
 const HomePage = () => {
   const [FormData, SetFormData] = useState<FormData>({
@@ -10,6 +11,8 @@ const HomePage = () => {
     hoursWorked: "",
     isEducated: false,
   });
+
+  const [response, setResponse] = useState<string | null>(null);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -33,6 +36,7 @@ const HomePage = () => {
       }
 
       const data = await response.json();
+      setResponse(`The calculated salary package limit is: ${data.limit}`);
       console.log("Response from server:", data);
     } catch (error) {
       console.error("Error:", error);
@@ -42,57 +46,88 @@ const HomePage = () => {
   console.log("formData", FormData);
 
   return (
-    <>
-      <h1>LeasePlus Salary Packaging Estimator </h1>
-      <form>
-        <label>Company Type</label>
-        <select name="companyType" onChange={handleChange}>
-          <option value="">Select</option>
-          <option value="Corporate">Corporate</option>
-          <option value="Hospital">Hospital</option>
-          <option value="PBI">PBI</option>
-        </select>
-        <br />
+    <div className="max-w-lg max-auto p-6 bg-white shadow-md rounded-md">
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        LeasePlus Salary Packaging Estimator{" "}
+      </h1>
+      <form className="block font-medium mb-1">
+        <div>
+          <label className="block font-medium mb-1">Company Type</label>
+          <select
+            className="w-full p-2 border border-e-gray-300 rounded-md"
+            name="companyType"
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Hospital">Hospital</option>
+            <option value="PBI">PBI</option>
+          </select>
 
-        <label>Employment Type:</label>
-        <select name="employmentType" onChange={handleChange}>
-          <option value="">Select</option>
-          <option value="Full-time">Full-time</option>
-          <option value="Part-time">Part-time</option>
-          <option value="Casual">Casual</option>
-        </select>
-        <br />
+          <label className="block font-medium mb-1">Employment Type:</label>
+          <select
+            name="employmentType"
+            className="w-full p-2 border border-gray-300 rounded-md"
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Casual">Casual</option>
+          </select>
 
-        {FormData.employmentType === "Part-time" && (
-          <>
-            <label>Hours Worked per week</label>
-            <input type="number" name="hoursWorked" onChange={handleChange} />
-          </>
-        )}
-        <br />
+          {FormData.employmentType === "Part-time" && (
+            <div>
+              <label className="block font-medium mb-1">
+                Hours Worked per week
+              </label>
+              <input
+                type="number"
+                name="hoursWorked"
+                placeholder="Whole Hours ONLY"
+                className="w-full p-2 border border-gray-300"
+                onChange={handleChange}
+              />
+            </div>
+          )}
 
-        <label>Salary</label>
-        <input type="number" name="salary" onChange={handleChange} />
-        <br />
+          <label className="block font-medium mb-1">Salary</label>
+          <input
+            type="number"
+            name="salary"
+            placeholder="e.g., 100000 (Enter full number without $ or commas)"
+            className="w-full p-2 border border-gray-300 rounded-md"
+            onChange={handleChange}
+          />
 
-        <label>Education</label>
-        <input type="checkbox" name="isEducated" onChange={handleChange} />
-        <br />
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="isEducated"
+              className="mr-2"
+              onChange={handleChange}
+            />
+            <label className="pl-4font-medium">
+              Completed a Bachelor Degree or Higher
+            </label>
+          </div>
 
-        <button type="button" onClick={handleSubmit}>
-          Calculate
-        </button>
+          <button
+            type="button"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue mt-5 "
+            onClick={handleSubmit}
+          >
+            Calculate Salary
+          </button>
+          {response && (
+            <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-md">
+              <p className="text-gray-800">{response}</p>
+            </div>
+          )}
+        </div>
       </form>
-    </>
+    </div>
   );
 };
 
 export default HomePage;
-
-export interface FormData {
-  companyType: string;
-  employmentType: string;
-  salary: number | "";
-  hoursWorked: number | "";
-  isEducated: boolean;
-}
